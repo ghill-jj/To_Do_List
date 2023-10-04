@@ -4,28 +4,15 @@ import Content from "./Content";
 import { useState } from "react";
 import Footer from "./Footer";
 import AddItem from "./AddItem";
+import SearchItem from "./SearchItem";
 
 const App = () => {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      checked: true,
-      item: "Practice Coding",
-    },
-    {
-      id: 2,
-      checked: false,
-      item: "Learn React",
-    },
-    {
-      id: 3,
-      checked: false,
-      item: "Learn Sql",
-    },
-  ]);
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem("to_do_list"))
+  );
 
   const [newItem, setNewItem] = useState("");
-
+  const [search, setSearch] = useState("");
   const addItem = (item) => {
     const id = items.length ? items[items.length - 1].id + 1 : 1;
     const addNewItem = { id, checked: false, item };
@@ -43,7 +30,7 @@ const App = () => {
   const handleDelete = (id) => {
     const listItems = items.filter((item) => item.id !== id);
     setItems(listItems);
-    localStorage.setItem("to_do_lists", JSON.stringify(listItems));
+    localStorage.setItem("to_do_list", JSON.stringify(listItems));
   };
 
   const handleSubmit = (e) => {
@@ -62,8 +49,12 @@ const App = () => {
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
       />
+      <SearchItem search={search} setSearch={setSearch} />
+
       <Content
-        items={items}
+        items={items.filter((item) =>
+          item.item.toLowerCase().includes(search.toLowerCase())
+        )}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
       />
